@@ -11,7 +11,11 @@ const Layout = () => {
                     </a>
                     <div className="flex md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse">
                         <button type="button" className="text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm px-4 py-2 text-center dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"><a href="/login">Login</a>  </button>
-                       
+                        <p>
+                            <a href="/employee-login" className="block text-white mt-1" aria-current="page">Employee login</a>
+                        </p>
+
+
                     </div>
                     <div className="items-center justify-between hidden w-full md:flex md:w-auto md:order-1" id="navbar-sticky">
                         <ul className="flex flex-col p-4 md:p-0 mt-4 font-medium border  md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0 ">
