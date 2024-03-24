@@ -1,28 +1,71 @@
-import express from "express";
+import express, { response } from "express";
 import cors from 'cors';
 import connectDB from "./database.js";
-import BankingUsers from './models/BankingModels/users.js'
-import { DB_NAME } from "./constants.js";
+import BankingUsers from './models/BankingModels/users.js';
+import Bonds from './models/BankingModels/loan.js';
+import Loan from "./models/BankingModels/loan.js";
 
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 
-// Connect to the database
 connectDB();
 
-// Define routes
 app.get('/', (req, res) => {
   res.send('Hello, World!');
 });
 function generateRandomNumber() {
-  return Math.floor(100 + Math.random() * 900); // Generates a random number between 100 and 999
+  return Math.floor(100 + Math.random() * 900);
+}
+function getCurrentDate() {
+  var today = new Date();
+  var dd = String(today.getDate()).padStart(2, '0');
+  var mm = String(today.getMonth() + 1).padStart(2, '0');
+  var yyyy = today.getFullYear();
+
+  return dd + '/' + mm + '/' + yyyy;
+}
+
+async function fetchUserName(email){
+  const response=await fetch('/login',{
+    method:'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ email: email})
+  });
+
+  const data = await response.json();
+  if (data.message === "SUCCESS") {
+    return data.name;
+  } else {
+    return null;
+  }
+}
+function generateLoanId() {
+  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  let loanId = '';
+
+  for (let i = 0; i < 8; i++) {
+    const randomIndex = Math.floor(Math.random() * characters.length);
+    loanId += characters[randomIndex];
+  }
+
+  return loanId;
+}
+
+function calculateAmountPerMonth(amount, time, interestRate) {
+  const monthlyInterestRate = (interestRate / 100) / 12;
+  
+  const numberOfMonths = time * 12;
+  const monthlyPayment = (amount * monthlyInterestRate) / (1 - Math.pow(1 + monthlyInterestRate, -numberOfMonths));
+
+  return monthlyPayment.toFixed(2);
 }
 
 app.post("/signup", async (req, res) => {
   const { name, email, password, cpass, pancardNum, mobileNum } = req.body;
-  // const firstName = name.split(' ')[0];
   const fullName = name.replace(/\s+/g, ''); // Remove all spaces and convert to lowercase
   const finalName=fullName.toLowerCase()
   const userId=finalName+"@sky"+generateRandomNumber()
@@ -42,8 +85,8 @@ app.post("/signup", async (req, res) => {
           mobileNum: mobileNum
         });
         console.log("Inserted", user);
-
-        res.status(200).json({ message: "SUCCESS" });
+        const name=user.name;
+        res.status(200).json({ message: "SUCCESS",name:name });
       }
       else {
         return res.status(202).json({ message: "NOTMATCH" });
@@ -62,20 +105,89 @@ app.post("/login", async (req, res) => {
   if (!user) {
     return res.status(202).json({ message: "NOTMATCH" });
   }
-
   const check = await BankingUsers.findOne({
     email: req.body.email,
     password: req.body.password
 
   });
-
+  const name=user.name;
   if(check){
-    return res.status(200).json({message:"SUCCESS"})
+    return res.status(200).json({message:"SUCCESS",name: name})
   }
   else{
     return res.status(202).json({ message: "NOTMATCH" });
   }
 })
+
+
+app.post("/loan",async(req,res)=>{
+  const {amount,time,dateOfBirth,pancardNum}=req.body
+  const user=await BankingUsers.findOne({pancardNum:pancardNum})
+  if(!user){
+    return res.status(202).json({message:"CREATE"})
+  }
+
+  if(amount<20000){
+    return res.status(400).json({message:"Low amount"})
+  }
+  const loanId=generateLoanId();
+  const userId=user.userId;
+  const interest=10;
+  const amountPermonth=calculateAmountPerMonth(amount,time,interest);
+
+  const issueDate=getCurrentDate();
+  const returnDate="24/03/2024";
+  const returned=false;
+  const mobileNum=user.mobileNum;
+  const loan=await Loan.create({
+    loanId:loanId,
+    userId:userId,
+    pancardNum:pancardNum,
+    amount:amount,
+    interest:interest,
+    amountPermonth:amountPermonth,
+    issueDate:issueDate,
+    returnDate:returnDate,
+    returned:returned,
+    mobileNum:mobileNum
+  })
+  console.log("Loan application submitted ",loan)
+  return res.status(200).json({message:"SUCCESS"})
+
+})
+app.get("/loan-applications",async(req,res)=>{
+  try {
+    const response = await Loan.find({});
+    console.log(response);
+    return res.send(response);
+  } catch (error) {
+    console.error("Error fetching loans:", error);
+    return res.status(500).send("Internal Server Error");
+  }
+})
+
+app.post("/loan-applications",async(req,res)=>{
+  const approve=req.body.approve;
+  const loanId=req.body.loanId;
+  console.log(approve);
+  console.log(loanId);
+  try {
+    const loan = await Loan.findOne({ loanId: loanId });
+
+    if (!loan) {
+        return res.status(404).send("Loan not found");
+    }
+    loan.approved = approve;
+    await loan.save();
+
+    console.log("Approval status updated:", approve, "for loanId:", loanId);
+    res.send("Approval status updated");
+} catch (error) {
+    console.error("Error updating approval status:", error);
+    res.status(500).send("Internal Server Error");
+}
+})
+
 
 // Start the server
 const port = process.env.PORT || 8000;

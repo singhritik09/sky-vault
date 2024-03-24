@@ -19,6 +19,7 @@ const Login = () => {
             }
 
             if (response.data.message === "SUCCESS") {
+                window.alert("Login Successful")
                 navigate('/')
             }
             setPassword("");
