@@ -4,7 +4,8 @@ import connectDB from "./database.js";
 import BankingUsers from './models/BankingModels/users.js';
 import Loan from "./models/BankingModels/loan.js";
 import Employees from "./models/BankingModels/employee.js";
-
+import ApprovedLoan from "./models/BankingModels/approved.js";
+import {sendEmail} from './utils/mail.js';
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -169,7 +170,8 @@ app.post("/loan", async (req, res) => {
     issueDate: issueDate,
     returnDate: returnDate,
     returned: returned,
-    mobileNum: mobileNum
+    mobileNum: mobileNum,
+    approved:false
   })
   console.log("Loan application submitted ", loan)
   return res.status(200).json({ message: "SUCCESS" })
@@ -199,8 +201,23 @@ app.post("/loan-applications", async (req, res) => {
     }
     loan.approved = approve;
     await loan.save();
-
-    console.log("Approval status updated:", approve, "for loanId:", loanId);
+    if (approve) {
+      const approvedLoan = await ApprovedLoan.create({
+          loanId: loan.loanId,
+          userId: loan.userId,
+          pancardNum: loan.pancardNum,
+          amount: loan.amount,
+          interest: loan.interest,
+          amountPermonth: loan.amountPermonth,
+          issueDate: loan.issueDate,
+          returnDate: loan.returnDate,
+          returned: loan.returned,
+          mobileNum: loan.mobileNum,
+          approved:loan.approved
+      });
+  }
+  await loan.deleteOne();
+    // console.log("Approval status updated:", approve, "for loanId:", loanId);
     res.send("Approval status updated");
   } catch (error) {
     console.error("Error updating approval status:", error);
@@ -209,7 +226,6 @@ app.post("/loan-applications", async (req, res) => {
 })
 
 
-// Start the server
 const port = process.env.PORT || 8000;
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);

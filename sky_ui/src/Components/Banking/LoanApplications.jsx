@@ -6,6 +6,8 @@ import { RxCross2 } from "react-icons/rx";
 const LoanApplications = () => {
     const [loans, setLoans] = useState([]);
     const approve = false;
+    const [approvedLoans, setApprovedLoans] = useState([]);
+
 
     const fetchLoans = async () => {
         try {
@@ -27,6 +29,10 @@ const LoanApplications = () => {
             loanId: loanId,
             approve: true
         })
+
+        setLoans(loans.filter(loan => loan.loanId !== loanId));
+        setApprovedLoans([...approvedLoans, loanId]);
+        window.alert("Loan Approved for ID: " + loanId);
     }
 
     async function handleReject(loanId) {
