@@ -24,6 +24,9 @@ const userSchema = new mongoose.Schema({
     mobileNum: {
         type: Number,
     },
+    balance:{
+        type:Number,
+    }
 })
 
 const BankingUsers = mongoose.model("bankingusers", userSchema)

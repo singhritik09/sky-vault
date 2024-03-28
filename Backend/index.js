@@ -6,6 +6,7 @@ import Loan from "./models/BankingModels/loan.js";
 import Employees from "./models/BankingModels/employee.js";
 import ApprovedLoan from "./models/BankingModels/approved.js";
 import {sendEmail} from './utils/mail.js';
+import { authenticateEmployee } from './middlewares/employeeLogin.js';
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -79,11 +80,11 @@ app.post("/signup", async (req, res) => {
       if (password === cpass) {
         const user = await BankingUsers.create({
           userId: userId,
-          name: name,
+          name: "John Doe",
           email: email,
           password: password,
           pancardNum: pancardNum,
-          mobileNum: mobileNum
+          mobileNum: mobileNum,
         });
         console.log("Inserted", user);
         const name = user.name;
@@ -177,6 +178,7 @@ app.post("/loan", async (req, res) => {
   return res.status(200).json({ message: "SUCCESS" })
 
 })
+
 app.get("/loan-applications", async (req, res) => {
   try {
     const response = await Loan.find({});
@@ -223,6 +225,42 @@ app.post("/loan-applications", async (req, res) => {
     console.error("Error updating approval status:", error);
     res.status(500).send("Internal Server Error");
   }
+})
+
+app.post("/transaction",async(req,res)=>{
+  const {amount, senderId, receiverId, password}=req.body;
+
+  const sender=await BankingUsers.findOne({userId:senderId});
+  const receiver=await BankingUsers.findOne({userId:receiverId});
+  const transactionAmount = parseFloat(amount);
+
+  if(amount>sender.balance){
+    return res.status(202).json({message:"EXCEEDED"});
+  }
+
+  if(!sender || !receiver){
+    return res.status(202).json({ message: "NOTEXIST" });
+  }
+  if(sender.password!==password){
+    return res.status(202).json({ message: "NOTMATCH" });
+  }
+  else if(senderId===receiverId)
+  {
+    return res.status(202).json({message: "IDMATCH"})
+  }
+  else{
+    sender.balance-=transactionAmount;
+    receiver.balance+=transactionAmount;
+    await sender.save();
+    await receiver.save();
+    console.log(sender);
+    console.log(receiver);
+
+    return res.status(200).json({message:"SUCCESS"});
+  }
+
+  res.send("Ok");
+
 })
 
 

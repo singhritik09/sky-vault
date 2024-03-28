@@ -9,6 +9,7 @@ import Loan from './Components/Banking/Loan';
 import Bonds from './Components/Banking/Bonds';
 import LoanApplications from './Components/Banking/LoanApplications';
 import EmployeeLogin from './Components/Banking/EmployeeLogin';
+import Transaction from './Components/Banking/Transaction';
 
 
 function App() {
@@ -23,6 +24,7 @@ function App() {
         <Route path='/bonds' Component={Bonds}/>
         <Route path='/loan-applications' Component={LoanApplications}/>
         <Route path='/employee-login' Component={EmployeeLogin}/>
+        <Route path='/transaction' Component={Transaction}/>
 
 
       </Routes>
