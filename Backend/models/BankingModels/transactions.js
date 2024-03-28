@@ -28,4 +28,4 @@ const transactionSchema = new mongoose.Schema({
 
 const Transaction = mongoose.model("transactions", transactionSchema)
 
-export default Employees;
+export default Transaction;
