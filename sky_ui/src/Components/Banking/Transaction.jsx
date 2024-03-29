@@ -93,7 +93,6 @@ const Transaction = () => {
         </div>
     );
 
-
 }
 
 export default Transaction;

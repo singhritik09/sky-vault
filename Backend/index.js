@@ -6,6 +6,8 @@ import Loan from "./models/BankingModels/loan.js";
 import Employees from "./models/BankingModels/employee.js";
 import ApprovedLoan from "./models/BankingModels/approved.js";
 import Transactions from "./models/BankingModels/transactions.js";
+import UserTransaction from "./models/BankingModels/userTransactions.js";
+import Bonds from "./models/BankingModels/bonds.js";
 
 // import { authenticateEmployee } from './middlewares/employeeLogin.js';
 const app = express();
@@ -262,9 +264,25 @@ app.post("/transaction",async(req,res)=>{
       receiverId:receiverId,
       time:datetime
     })
+
+    const userTransaction = await UserTransaction.create({
+      transactionId:generateLoanId(),
+      userId:senderId,
+      receiverId:receiverId,
+      amount:transactionAmount,
+      time:datetime
+    })
+
     console.log(transaction);
     return res.status(200).json({message:"SUCCESS"});
   }
+})
+
+app.get("/bonds",async(req,res)=>{
+  const data=await Bonds.find({});
+  console.log(data);
+  res.send(data);
+  res.send("Hello")
 })
 
 

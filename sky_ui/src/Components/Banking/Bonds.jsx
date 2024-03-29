@@ -1,10 +1,34 @@
-import React from "react";
+import React, { useState,useEffect } from "react";
+import Card from './Card';
+import axios from "axios";
+const Bonds = () => {
 
-const Bonds = () =>{
-    return(
-        <div className="mt-20">
-            <p>Buy bonds</p>
-        </div>
+    const [bonds,setBonds]=useState([]);
+
+    useEffect(() => {
+        async function fetchData() {
+            try {
+                const response = await axios.get("http://localhost:8000/bonds");
+                setBonds(response.data);
+            } catch (error) {
+                console.error("Error fetching bonds:", error);
+            }
+        }
+
+        fetchData();
+    }, []);
+
+    return (
+        <>
+            <br /><br /><br />
+            <div className="mt-32 flex flex-wrap ml-5">
+            {bonds.map(bond=>(
+            <Card key={bond._id} name={bond.bondName} price={bond.price}/>
+
+            ))}
+
+            </div>
+        </>
     );
 }
 
