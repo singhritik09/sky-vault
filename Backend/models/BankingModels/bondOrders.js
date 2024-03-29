@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const bondSchema = new mongoose.Schema({
+const bondOrderSchema = new mongoose.Schema({
     bondId:{
         type:Number,
         required:true,
@@ -14,23 +14,17 @@ const bondSchema = new mongoose.Schema({
         type:Number,
         required:true,
     },
-    maxAvailable:{
-        type:Number,
-        required:true,
-    },
     interest:{
         type:Number,
         required:true
     },
-    rating:{
+    totalAmount:{
         type:Number,
-    },
-    ownership:{
-        type:String
+        required:true
     }
 
 });
 
-const Bonds = mongoose.model("bonds", bondSchema)
+const BondsOrder = mongoose.model("bondsOrder", bondOrderSchema)
 
-export default Bonds;
+export default BondsOrder;

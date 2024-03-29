@@ -1,6 +1,7 @@
+import axios from "axios";
 import React, { useState } from "react";
 
-const Card = ({ name, price }) => {
+const Card = ({ bondId, name, price }) => {
     const [quantity, setQuantity] = useState(0);
 
     const handleIncrement = () => {
@@ -12,7 +13,21 @@ const Card = ({ name, price }) => {
             setQuantity(prevQuantity => prevQuantity - 1);
         }
     };
-    const totalPrice=quantity*price;
+
+    const totalPrice = quantity * price;
+
+    async function buyBond(bondId) {
+        try {
+            await axios.post("http://localhost:8000/bonds", {
+                bondId: bondId,
+                quantity: quantity 
+            });
+            window.alert(`You bought ${quantity} units of ${name} bond!`);
+        } catch (error) {
+            console.error("Error:", error);
+        }
+    }
+
     return (
         <div className="max-w-sm rounded overflow-hidden shadow-lg ml-4 mt-2">
             <div className="px-6 py-4">
@@ -38,7 +53,7 @@ const Card = ({ name, price }) => {
                     </div>
                     <button
                         className="bg-green-600 ml-2 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
-                        onClick={() => alert(`You bought ${quantity} units of ${name} bond!`)}
+                        onClick={() => buyBond(bondId)}
                     >
                         Buy
                     </button>

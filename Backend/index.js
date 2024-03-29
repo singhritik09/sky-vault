@@ -8,6 +8,7 @@ import ApprovedLoan from "./models/BankingModels/approved.js";
 import Transactions from "./models/BankingModels/transactions.js";
 import UserTransaction from "./models/BankingModels/userTransactions.js";
 import Bonds from "./models/BankingModels/bonds.js";
+import BondsOrder from "./models/BankingModels/bondOrders.js";
 
 // import { authenticateEmployee } from './middlewares/employeeLogin.js';
 const app = express();
@@ -280,11 +281,30 @@ app.post("/transaction",async(req,res)=>{
 
 app.get("/bonds",async(req,res)=>{
   const data=await Bonds.find({});
-  console.log(data);
   res.send(data);
-  res.send("Hello")
 })
 
+app.post("/bonds",async(req,res)=>{
+  const {bondId,quantity}=req.body;
+  const bond=await Bonds.findOne({bondId:bondId})
+  const transactionAmount = parseInt(bond.price);
+  const total=transactionAmount*quantity;
+
+  try{
+    const newTransaction = await BondsOrder.create({
+      bondId:bondId,
+      bondName:bond.bondName,
+      price:bond.price,
+      interest:bond.interest,
+      totalAmount:total
+    })
+    console.log(newTransaction);
+  }
+  catch(e){
+    console.log("Error:",e)
+  }
+  return res.status(200).json({message:"SUCCESS"});
+})
 
 const port = process.env.PORT || 8000;
 app.listen(port, () => {
