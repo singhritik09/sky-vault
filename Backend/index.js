@@ -231,33 +231,50 @@ app.post("/loan-applications", async (req, res) => {
   }
 })
 
-app.post("/transaction",async(req,res)=>{
-  const {amount, senderId, receiverId, password}=req.body;
+app.post("/transaction", async(req, res) => {
+  const { amount, senderId, receiverId, password } = req.body;
 
-  const sender=await BankingUsers.findOne({userId:senderId});
-  const receiver=await BankingUsers.findOne({userId:receiverId});
+  const sender = await BankingUsers.findOne({ userId: senderId });
+  const receiver = await BankingUsers.findOne({ userId: receiverId });
   const transactionAmount = parseFloat(amount);
 
-  if(amount>sender.balance){
-    return res.status(202).json({message:"EXCEEDED"});
-  }
-
-  if(!sender || !receiver){
+  if (!sender || !receiver) {
     return res.status(202).json({ message: "NOTEXIST" });
   }
-  if(sender.password!==password){
+  if (sender.password !== password) {
     return res.status(202).json({ message: "NOTMATCH" });
-  }
-  else if(senderId===receiverId)
-  {
-    return res.status(202).json({message: "IDMATCH"})
-  }
-  else{
-    sender.balance-=transactionAmount;
-    receiver.balance+=transactionAmount;
-    await sender.save();
-    await receiver.save();
-    const datetime=new Date();
+  } else if (senderId === receiverId) {
+    return res.status(202).json({ message: "IDMATCH" });
+  } else if (amount > sender.balance) {
+    return res.status(202).json({ message: "EXCEEDED" });
+  } else {
+    const datetime = new Date();
+    const uid = generateLoanId();
+
+    const senderTransaction = {
+      transactionId: uid,
+      userId: senderId,
+      receiverId: receiverId,
+      amount: -transactionAmount, // Negative amount for debiting sender's account
+      debit: true,
+      time: datetime
+    };
+
+    const receiverTransaction = {
+      transactionId: uid,
+      userId: receiverId,
+      receiverId: senderId,
+      amount: transactionAmount,
+      credit: true,
+      time: datetime
+    };
+
+    sender.balance -= transactionAmount;
+    receiver.balance += transactionAmount;
+
+    sender.transactionHistory.push(senderTransaction);
+    receiver.transactionHistory.push(receiverTransaction);
+
     const transaction= await Transactions.create({
       transactionId:generateLoanId(),
       amount:transactionAmount,
@@ -266,18 +283,15 @@ app.post("/transaction",async(req,res)=>{
       time:datetime
     })
 
-    const userTransaction = await UserTransaction.create({
-      transactionId:generateLoanId(),
-      userId:senderId,
-      receiverId:receiverId,
-      amount:transactionAmount,
-      time:datetime
-    })
+
+    await sender.save();
+    await receiver.save();
 
     console.log(transaction);
-    return res.status(200).json({message:"SUCCESS"});
+    return res.status(200).json({ message: "SUCCESS" });
   }
-})
+});
+
 
 app.get("/bonds",async(req,res)=>{
   const data=await Bonds.find({});

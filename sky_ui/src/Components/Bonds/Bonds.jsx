@@ -23,7 +23,7 @@ const Bonds = () => {
             <br /><br /><br />
             <div className="mt-32 flex flex-wrap ml-5">
             {bonds.map(bond=>(
-            <Card key={bond._id} bondId={bond.bondId} name={bond.bondName} price={bond.price}/>
+            <Card key={bond._id} bondId={bond.bondId} name={bond.bondName} price={bond.price} rating={bond.rating}/>
             ))}
 
             </div>

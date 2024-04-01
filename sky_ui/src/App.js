@@ -6,7 +6,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Layout from './Components/Banking/Layout';
 import Signup from './Components/Banking/Signup';
 import Loan from './Components/Banking/Loan';
-import Bonds from './Components/Banking/Bonds';
+import Bonds from './Components/Bonds/Bonds';
 import LoanApplications from './Components/Banking/LoanApplications';
 import EmployeeLogin from './Components/Banking/EmployeeLogin';
 import Transaction from './Components/Banking/Transaction';

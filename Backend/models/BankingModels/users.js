@@ -1,4 +1,31 @@
 import mongoose from "mongoose";
+const transactionSchema = new mongoose.Schema({
+    transactionId:{
+        type:String,
+        required:true
+    },
+    userId: {
+        type: String,
+        required: true
+    },
+    receiverId: {
+        type: String,
+        required: true
+    },
+    amount: {
+        type: Number,
+        required: true
+    },
+    credit: {
+        type: Boolean,
+    },
+    debit: {
+        type: Boolean,
+    },
+    time: {
+        type: String,
+    }
+});
 
 const userSchema = new mongoose.Schema({
     userId:{
@@ -26,7 +53,9 @@ const userSchema = new mongoose.Schema({
     },
     balance:{
         type:Number,
-    }
+    },
+    transactionHistory:[transactionSchema]
+    
 })
 
 const BankingUsers = mongoose.model("bankingusers", userSchema)
