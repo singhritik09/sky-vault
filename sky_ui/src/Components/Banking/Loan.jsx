@@ -34,7 +34,7 @@ const Loan = ({ isOpen, onClose }) => {
     return (
         <>
             {/* {isOpen && ( */}
-            <div className="fixed inset-0 z-50 flex items-center justify-center overflow-x-hidden overflow-y-auto outline-none focus:outline-none">
+            <div className="mt-48 fixed inset-0 z-50 flex items-center justify-center overflow-x-hidden overflow-y-auto outline-none focus:outline-none">
                 <div className="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
                     <div className="p-2 py-6 space-y-2 md:space-y-6 sm:p-8">
                         <h1 className="text-lg font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">

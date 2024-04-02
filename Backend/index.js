@@ -312,6 +312,8 @@ app.post("/bonds",async(req,res)=>{
       interest:bond.interest,
       totalAmount:total
     })
+    bond.maxAvailable-=quantity;
+    await bond.save();
     console.log(newTransaction);
   }
   catch(e){
@@ -319,6 +321,28 @@ app.post("/bonds",async(req,res)=>{
   }
   return res.status(200).json({message:"SUCCESS"});
 })
+
+app.get("/transaction-history", async (req, res) => {
+  try {
+    const userId = "checknow@sky736";
+    const user = await BankingUsers.findOne({ userId: userId });
+
+    if (!user) {
+      console.log("User not found");
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const data = user.transactionHistory;
+
+    console.log(data);
+    console.log("Request processed successfully");
+    res.send(data);
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+});
+
 
 const port = process.env.PORT || 8000;
 app.listen(port, () => {
