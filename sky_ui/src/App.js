@@ -12,13 +12,16 @@ import Transaction from './Components/Banking/Transaction';
 import PageTransition from './Components/PageTransition';
 import TransactionHistory from './Components/Banking/TransactionHistory';
 import UserDashboard from './Components/Dashboard/UserDashboard';
+import ApprovedLoans from './Components/Banking/ApprovedLoans';
+import Choice from './Components/Choice';
 
 function App() {
   return (
     <Router>
       <Layout />
       <Routes>
-        <Route path="/" element={<PageTransition><Home /></PageTransition>} />
+      <Route path="/" element={<PageTransition><Choice /></PageTransition>} />
+        <Route path="/Home" element={<PageTransition><Home /></PageTransition>} />
         <Route path="/loan" element={<PageTransition><Loan /></PageTransition>} />
         <Route path="/login" element={<PageTransition><Login /></PageTransition>} />
         <Route path="/signup" element={<PageTransition><Signup /></PageTransition>} />
@@ -28,7 +31,7 @@ function App() {
         <Route path="/transaction" element={<PageTransition><Transaction /></PageTransition>} />
         <Route path="/transaction-history" element={<PageTransition><TransactionHistory /></PageTransition>} />
         <Route path="/dashboard" element={<PageTransition><UserDashboard /></PageTransition>} />
-
+        <Route path="/approved-loans" element={<PageTransition><ApprovedLoans /></PageTransition>} />
 
       </Routes>
     </Router>

@@ -43,7 +43,7 @@ const LoanApplications = () => {
     }
 
     return (
-        <div className='container w-4/5 mt-20 h-3/5 cursor-pointer bg-white text-gray-600'>
+        <div className='container w-4/5 mt-48 h-3/5 cursor-pointer bg-white text-gray-600'>
             <table className='table-auto border rounded-md border-gray-500 ml-40'>
                 <thead className='border border-gray-400 text-center'>
                     <tr>

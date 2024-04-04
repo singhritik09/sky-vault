@@ -11,6 +11,7 @@ import Bonds from "./models/BankingModels/bonds.js";
 import BondsOrder from "./models/BankingModels/bondOrders.js";
 import session from 'express-session';
 import bcrypt from 'bcrypt';
+import MongoStore from 'connect-mongo';
 
 // import { authenticateEmployee } from './middlewares/employeeLogin.js';
 const app = express();
@@ -20,15 +21,25 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 
+// Configure session middleware with MongoDB store
 app.use(session({
-  secret: 'keyboardcat',
-  cookie: { maxAge: 60000 },
-  path:'/'
+  secret: 'your_secret_key',
+  resave: false,
+  saveUninitialized: true,
+  // store: MongoStore.create({
+  //   mongoUrl: 'mongodb://127.0.0.1:27017/session_store',
+  //   ttl: 24 * 60 * 60, // session TTL (optional),
+  // }),
+  cookie: {
+    maxAge: 24 * 60 * 60 * 1000 // 1 day
+  },
+  regenerate: false
+
 }));
 
-app.get('/', (req, res) => {
+app.get('/', async (req, res) => {
   console.log("Home: ", req.session)
-  res.send('Hello, World!');
+  res.send(user);
 });
 function generateRandomNumber() {
   return Math.floor(100 + Math.random() * 900);
@@ -81,12 +92,12 @@ function calculateAmountPerMonth(amount, time, interestRate) {
 
 app.post("/signup", async (req, res) => {
   const { name, email, password, cpass, pancardNum, mobileNum } = req.body;
-  var aname=name;
+  var aname = name;
   const fullName = name.replace(/\s+/g, '');
   const finalName = fullName.toLowerCase()
   const userId = finalName + "@sky" + generateRandomNumber()
   const existingUser = await BankingUsers.findOne({ $or: [{ email: email }, { mobileNum: mobileNum }] });
-  const hashPsw =await bcrypt.hash(password,12);
+  const hashPsw = await bcrypt.hash(password, 12);
 
   if (existingUser) {
     return res.status(400).json({ message: "PRESENT" });
@@ -123,7 +134,7 @@ app.post("/login", async (req, res) => {
   if (!user) {
     return res.status(202).json({ message: "NOTMATCH" });
   }
-  const checkEncrypted =await bcrypt.compare(password , user.password);
+  const checkEncrypted = await bcrypt.compare(password, user.password);
 
   const check = await BankingUsers.findOne({
     email: req.body.email,
@@ -132,9 +143,13 @@ app.post("/login", async (req, res) => {
   });
   const name = user.name;
   if (check || checkEncrypted) {
-    req.session.authenticated=true
+    req.session.authenticated = true
     req.session.userId = user.userId;
-    console.log(req.session);
+
+    req.session.isDashboard = false; // Flag to indicate not yet in dashboard
+    req.session.save();
+    console.log("Login session:", req.session.id);
+
     return res.status(200).json({ message: "SUCCESS", name: name })
   }
   else {
@@ -143,20 +158,35 @@ app.post("/login", async (req, res) => {
 });
 
 app.get("/dashboard", async (req, res) => {
-  console.log("Session in dashboard:", req.session.userId);
-
+  // console.log("Session in dashboard:", req.session.id)
   // if (!req.session.userId) {
   //   return res.status(401).json({ message: "UNAUTHORIZED" });
   // }
+  // if (!req.session.isDashboard) {
+  //   console.log("Session in dashboard:", req.session.id);
+  //   req.session.isDashboard = true; // Set flag to prevent further logging
+  // }
 
-  const userId = "WillShawn@sky260";
+  // Retrieve userId from session
+  var userId="WillShawn@sky260"
+  if(req.session.userId){
+   userId = req.session.userId;
+  }
+  try {
+    // Fetch user data from database using userId
+    const user = await BankingUsers.findOne({ userId: userId });
 
-  const user = await BankingUsers.findOne({ userId: userId });
-  if (!user) {
-    return res.status(401).json({ message: "UNAUTHORIZED" });
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Return user data
+    res.status(200).json(user);
+  } catch (error) {
+    console.error('Error fetching user data:', error);
+    res.status(500).json({ message: "Internal server error" });
   }
 
-  res.status(200).json(user);
 });
 
 
@@ -267,6 +297,11 @@ app.post("/loan-applications", async (req, res) => {
   }
 })
 
+app.get("/approved-loans",async(req,res)=>{
+  const loans=await ApprovedLoan.find({});
+  res.send(loans);
+})
+
 app.post("/transaction", async (req, res) => {
   const { amount, senderId, receiverId, password } = req.body;
 
@@ -361,7 +396,6 @@ app.post("/bonds", async (req, res) => {
 app.get("/transaction-history", async (req, res) => {
   try {
     const userId = "checknow@sky736";
-    console.log(req.session)
     const user = await BankingUsers.findOne({ userId: userId });
 
     if (!user) {

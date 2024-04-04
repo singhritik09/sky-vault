@@ -11,11 +11,7 @@ const Layout = () => {
                     </a>
                     <div className="flex md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse items-center"> {/* Added items-center class */}
                         <button type="button" className="text-white bg-green-700 mt-8 hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm px-4 py-2 text-center dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"><a href="/login">Login</a>  </button>
-                        <p>
-                            <a href="/employee-login" className="block text-white mt-9 ml-3" aria-current="page">Employee login</a>
-                        </p>
-    
-                        <div className="text-gray-200 text-2xl mt-9 ml-2 flex justify-end w-full cursor-pointer"> {/* Added flex and justify-end classes */}
+                        <div className="text-gray-200 text-2xl mt-9 ml-4 flex justify-end w-full cursor-pointer"> {/* Added flex and justify-end classes */}
                            <a href="/dashboard"> <FaUserGear/></a>
                         </div>
                     </div>
