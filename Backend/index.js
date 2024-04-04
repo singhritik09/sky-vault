@@ -9,16 +9,25 @@ import Transactions from "./models/BankingModels/transactions.js";
 import UserTransaction from "./models/BankingModels/userTransactions.js";
 import Bonds from "./models/BankingModels/bonds.js";
 import BondsOrder from "./models/BankingModels/bondOrders.js";
+import session from 'express-session';
+import bcrypt from 'bcrypt';
 
 // import { authenticateEmployee } from './middlewares/employeeLogin.js';
 const app = express();
+connectDB();
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 
-connectDB();
+app.use(session({
+  secret: 'keyboardcat',
+  cookie: { maxAge: 60000 },
+  path:'/'
+}));
 
 app.get('/', (req, res) => {
+  console.log("Home: ", req.session)
   res.send('Hello, World!');
 });
 function generateRandomNumber() {
@@ -72,10 +81,13 @@ function calculateAmountPerMonth(amount, time, interestRate) {
 
 app.post("/signup", async (req, res) => {
   const { name, email, password, cpass, pancardNum, mobileNum } = req.body;
-  const fullName = name.replace(/\s+/g, ''); // Remove all spaces and convert to lowercase
+  var aname=name;
+  const fullName = name.replace(/\s+/g, '');
   const finalName = fullName.toLowerCase()
   const userId = finalName + "@sky" + generateRandomNumber()
   const existingUser = await BankingUsers.findOne({ $or: [{ email: email }, { mobileNum: mobileNum }] });
+  const hashPsw =await bcrypt.hash(password,12);
+
   if (existingUser) {
     return res.status(400).json({ message: "PRESENT" });
   }
@@ -84,9 +96,9 @@ app.post("/signup", async (req, res) => {
       if (password === cpass) {
         const user = await BankingUsers.create({
           userId: userId,
-          name: "John Doe",
+          name: aname,
           email: email,
-          password: password,
+          password: hashPsw,
           pancardNum: pancardNum,
           mobileNum: mobileNum,
         });
@@ -111,24 +123,48 @@ app.post("/login", async (req, res) => {
   if (!user) {
     return res.status(202).json({ message: "NOTMATCH" });
   }
+  const checkEncrypted =await bcrypt.compare(password , user.password);
+
   const check = await BankingUsers.findOne({
     email: req.body.email,
     password: req.body.password
 
   });
-  console.log(check)
   const name = user.name;
-  if (check) {
+  if (check || checkEncrypted) {
+    req.session.authenticated=true
+    req.session.userId = user.userId;
+    console.log(req.session);
     return res.status(200).json({ message: "SUCCESS", name: name })
   }
   else {
     return res.status(202).json({ message: "NOTMATCH" });
   }
-})
+});
+
+app.get("/dashboard", async (req, res) => {
+  console.log("Session in dashboard:", req.session.userId);
+
+  // if (!req.session.userId) {
+  //   return res.status(401).json({ message: "UNAUTHORIZED" });
+  // }
+
+  const userId = "WillShawn@sky260";
+
+  const user = await BankingUsers.findOne({ userId: userId });
+  if (!user) {
+    return res.status(401).json({ message: "UNAUTHORIZED" });
+  }
+
+  res.status(200).json(user);
+});
+
+
+
 
 app.post("/employee-login", async (req, res) => {
   const { employeeId, password } = req.body;
-  
+
   try {
     const employee = await Employees.findOne({ employeeId: employeeId });
     console.log(employee)
@@ -176,7 +212,7 @@ app.post("/loan", async (req, res) => {
     returnDate: returnDate,
     returned: returned,
     mobileNum: mobileNum,
-    approved:false
+    approved: false
   })
   console.log("Loan application submitted ", loan)
   return res.status(200).json({ message: "SUCCESS" })
@@ -209,20 +245,20 @@ app.post("/loan-applications", async (req, res) => {
     await loan.save();
     if (approve) {
       const approvedLoan = await ApprovedLoan.create({
-          loanId: loan.loanId,
-          userId: loan.userId,
-          pancardNum: loan.pancardNum,
-          amount: loan.amount,
-          interest: loan.interest,
-          amountPermonth: loan.amountPermonth,
-          issueDate: loan.issueDate,
-          returnDate: loan.returnDate,
-          returned: loan.returned,
-          mobileNum: loan.mobileNum,
-          approved:loan.approved
+        loanId: loan.loanId,
+        userId: loan.userId,
+        pancardNum: loan.pancardNum,
+        amount: loan.amount,
+        interest: loan.interest,
+        amountPermonth: loan.amountPermonth,
+        issueDate: loan.issueDate,
+        returnDate: loan.returnDate,
+        returned: loan.returned,
+        mobileNum: loan.mobileNum,
+        approved: loan.approved
       });
-  }
-  await loan.deleteOne();
+    }
+    await loan.deleteOne();
     // console.log("Approval status updated:", approve, "for loanId:", loanId);
     res.send("Approval status updated");
   } catch (error) {
@@ -231,7 +267,7 @@ app.post("/loan-applications", async (req, res) => {
   }
 })
 
-app.post("/transaction", async(req, res) => {
+app.post("/transaction", async (req, res) => {
   const { amount, senderId, receiverId, password } = req.body;
 
   const sender = await BankingUsers.findOne({ userId: senderId });
@@ -275,12 +311,12 @@ app.post("/transaction", async(req, res) => {
     sender.transactionHistory.push(senderTransaction);
     receiver.transactionHistory.push(receiverTransaction);
 
-    const transaction= await Transactions.create({
-      transactionId:generateLoanId(),
-      amount:transactionAmount,
-      senderId:senderId,
-      receiverId:receiverId,
-      time:datetime
+    const transaction = await Transactions.create({
+      transactionId: generateLoanId(),
+      amount: transactionAmount,
+      senderId: senderId,
+      receiverId: receiverId,
+      time: datetime
     })
 
 
@@ -293,38 +329,39 @@ app.post("/transaction", async(req, res) => {
 });
 
 
-app.get("/bonds",async(req,res)=>{
-  const data=await Bonds.find({});
+app.get("/bonds", async (req, res) => {
+  const data = await Bonds.find({});
   res.send(data);
 })
 
-app.post("/bonds",async(req,res)=>{
-  const {bondId,quantity}=req.body;
-  const bond=await Bonds.findOne({bondId:bondId})
+app.post("/bonds", async (req, res) => {
+  const { bondId, quantity } = req.body;
+  const bond = await Bonds.findOne({ bondId: bondId })
   const transactionAmount = parseInt(bond.price);
-  const total=transactionAmount*quantity;
+  const total = transactionAmount * quantity;
 
-  try{
+  try {
     const newTransaction = await BondsOrder.create({
-      bondId:bondId,
-      bondName:bond.bondName,
-      price:bond.price,
-      interest:bond.interest,
-      totalAmount:total
+      bondId: bondId,
+      bondName: bond.bondName,
+      price: bond.price,
+      interest: bond.interest,
+      totalAmount: total
     })
-    bond.maxAvailable-=quantity;
+    bond.maxAvailable -= quantity;
     await bond.save();
     console.log(newTransaction);
   }
-  catch(e){
-    console.log("Error:",e)
+  catch (e) {
+    console.log("Error:", e)
   }
-  return res.status(200).json({message:"SUCCESS"});
+  return res.status(200).json({ message: "SUCCESS" });
 })
 
 app.get("/transaction-history", async (req, res) => {
   try {
     const userId = "checknow@sky736";
+    console.log(req.session)
     const user = await BankingUsers.findOne({ userId: userId });
 
     if (!user) {
@@ -334,8 +371,6 @@ app.get("/transaction-history", async (req, res) => {
 
     const data = user.transactionHistory;
 
-    console.log(data);
-    console.log("Request processed successfully");
     res.send(data);
   } catch (error) {
     console.error("Error:", error);

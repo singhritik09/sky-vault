@@ -20,7 +20,7 @@ const Login = () => {
 
             if (response.data.message === "SUCCESS") {
                 window.alert("Login Successful")
-                navigate('/')
+                navigate('/dashboard')
             }
             setPassword("");
         } catch (e) {

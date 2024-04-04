@@ -11,6 +11,7 @@ import EmployeeLogin from './Components/Banking/EmployeeLogin';
 import Transaction from './Components/Banking/Transaction';
 import PageTransition from './Components/PageTransition';
 import TransactionHistory from './Components/Banking/TransactionHistory';
+import UserDashboard from './Components/Dashboard/UserDashboard';
 
 function App() {
   return (
@@ -26,6 +27,8 @@ function App() {
         <Route path="/employee-login" element={<PageTransition><EmployeeLogin /></PageTransition>} />
         <Route path="/transaction" element={<PageTransition><Transaction /></PageTransition>} />
         <Route path="/transaction-history" element={<PageTransition><TransactionHistory /></PageTransition>} />
+        <Route path="/dashboard" element={<PageTransition><UserDashboard /></PageTransition>} />
+
 
       </Routes>
     </Router>

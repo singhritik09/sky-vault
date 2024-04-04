@@ -9,6 +9,7 @@ const TransactionHistory = () => {
     }, []);
 
     async function fetchTransactionHistory() {
+      // e.preventDefault();
         try {
             const response = await axios.get("http://localhost:8000/transaction-history");
             setTransactions(response.data);
@@ -21,6 +22,9 @@ const TransactionHistory = () => {
         <>
             <br/><br/><br/><br/><br/><br/>
             <div className="overflow-x-auto mt-42 flex justify-center align-center">
+              {/* <form action="" onSubmit={fetchTransactionHistory}>
+                <button type='submit'>Submit</button>
+              </form> */}
                 <table className="border-collapse">
                     <thead>
                         <tr>
