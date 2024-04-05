@@ -12,7 +12,7 @@ import BondsOrder from "./models/BankingModels/bondOrders.js";
 import session from 'express-session';
 import bcrypt from 'bcrypt';
 import MongoStore from 'connect-mongo';
-
+import AuditLogs from "./models/BankingModels/audit.js";
 // import { authenticateEmployee } from './middlewares/employeeLogin.js';
 const app = express();
 connectDB();
@@ -194,6 +194,7 @@ app.get("/dashboard", async (req, res) => {
 
 app.post("/employee-login", async (req, res) => {
   const { employeeId, password } = req.body;
+  const datetime = new Date();
 
   try {
     const employee = await Employees.findOne({ employeeId: employeeId });
@@ -202,6 +203,11 @@ app.post("/employee-login", async (req, res) => {
       return res.status(202).json({ message: "NOTMATCH" });
     }
     if (employee.password === password) {
+      const audit=await AuditLogs.create({
+        employeeId:employeeId,
+        role:employee.role,
+        date:datetime
+      });
       return res.status(200).json({ message: "SUCCESS" });
     } else {
       return res.status(202).json({ message: "NOTMATCH" });
@@ -412,6 +418,10 @@ app.get("/transaction-history", async (req, res) => {
   }
 });
 
+app.get("/audit-logs",async(req,res)=>{
+  const data=await AuditLogs.find({}).sort({ date: -1 });;
+  res.send(data);
+})
 
 const port = process.env.PORT || 8000;
 app.listen(port, () => {

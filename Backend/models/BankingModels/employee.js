@@ -13,6 +13,9 @@ const employeeSchema = new mongoose.Schema({
     mobileNum:{
         type:Number,
         unique:true,
+    },
+    role:{
+        type:String
     }
 })
 

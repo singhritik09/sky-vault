@@ -14,6 +14,7 @@ import TransactionHistory from './Components/Banking/TransactionHistory';
 import UserDashboard from './Components/Dashboard/UserDashboard';
 import ApprovedLoans from './Components/Banking/ApprovedLoans';
 import Choice from './Components/Choice';
+import AuditLogin from './Components/Employee/AuditLogin';
 
 function App() {
   return (
@@ -32,6 +33,7 @@ function App() {
         <Route path="/transaction-history" element={<PageTransition><TransactionHistory /></PageTransition>} />
         <Route path="/dashboard" element={<PageTransition><UserDashboard /></PageTransition>} />
         <Route path="/approved-loans" element={<PageTransition><ApprovedLoans /></PageTransition>} />
+        <Route path="/audit-logs" element={<PageTransition><AuditLogin /></PageTransition>} />
 
       </Routes>
     </Router>
