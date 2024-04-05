@@ -15,6 +15,7 @@ import UserDashboard from './Components/Dashboard/UserDashboard';
 import ApprovedLoans from './Components/Banking/ApprovedLoans';
 import Choice from './Components/Choice';
 import AuditLogin from './Components/Employee/AuditLogin';
+import Version from './Components/Employee/Version';
 
 function App() {
   return (
@@ -34,6 +35,7 @@ function App() {
         <Route path="/dashboard" element={<PageTransition><UserDashboard /></PageTransition>} />
         <Route path="/approved-loans" element={<PageTransition><ApprovedLoans /></PageTransition>} />
         <Route path="/audit-logs" element={<PageTransition><AuditLogin /></PageTransition>} />
+        <Route path="/version" element={<PageTransition><Version /></PageTransition>} />
 
       </Routes>
     </Router>

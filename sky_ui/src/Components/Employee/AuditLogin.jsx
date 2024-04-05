@@ -32,7 +32,10 @@ const AuditLogin = () => {
             </style>
 
             <AlternateLayout />
-            <div className="mt-32 flex">
+            <h2 className="mt-32 ml-52">Users Login</h2>
+
+            <div className="flex">
+
                 <div className='container cursor-pointer text-gray-600'>
                     <table className='border-2 mt-12 table-auto border-gray-600 ml-40'>
                         <thead className='border border-green-700 text-center'>
@@ -53,8 +56,6 @@ const AuditLogin = () => {
                         </tbody>
                     </table>
                 </div>
-
-
             </div>
         </>
     );

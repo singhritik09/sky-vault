@@ -13,6 +13,7 @@ import session from 'express-session';
 import bcrypt from 'bcrypt';
 import MongoStore from 'connect-mongo';
 import AuditLogs from "./models/BankingModels/audit.js";
+import axios from "axios";
 // import { authenticateEmployee } from './middlewares/employeeLogin.js';
 const app = express();
 connectDB();
@@ -422,6 +423,34 @@ app.get("/audit-logs",async(req,res)=>{
   const data=await AuditLogs.find({}).sort({ date: -1 });;
   res.send(data);
 })
+
+// app.get('/version', async (req, res) => {
+//   try {
+//     const owner = 'singhritik09';
+//     const repo = 'sky-vault';
+//     const response = await axios.get('https://api.github.com/repos/singhritik09/sky-vault/commits');
+
+//     const commits = response.data.map(commit => ({
+//       sha: commit.sha,
+//       message: commit.commit.message,
+//       committer: {
+//         name: commit.commit.committer.name,
+//         email: commit.commit.committer.email
+//       },
+//       date: commit.commit.committer.date,
+//       // Add repository name property
+//       repository: {
+//         name: repo // Use the defined repo variable
+//       }
+//     }));
+
+//     res.json(commits);
+//   } catch (error) {
+//     console.error('Error fetching commits:', error);
+//     res.status(500).json({ error: 'Failed to fetch commit history' });
+//   }
+// });
+
 
 const port = process.env.PORT || 8000;
 app.listen(port, () => {
