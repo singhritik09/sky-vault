@@ -10,20 +10,20 @@ const Signup = () => {
     const [mobileNum, setMobileNum] = useState("")
     const [alertMessage, setAlertMessage] = useState("");
 
-    const [showDialog,setShowDialog]=useState(false);
-    const navigate=useNavigate()
+    const [showDialog, setShowDialog] = useState(false);
+    const navigate = useNavigate()
     async function handleFormSubmit(e) {
         e.preventDefault(); // Prevent default form submission
 
         try {
-            const response=await axios.post("http://localhost:8000/signup", {
+            const response = await axios.post("http://localhost:8000/signup", {
                 name, email, password, cpass, pancardNum, mobileNum
             });
             if (response.status === 400 || response.data.message === "PRESENT") {
                 setShowDialog(true)
                 setAlertMessage("User already exists. Please choose a different email.");
                 window.alert("User already exists")
-            } 
+            }
             if (response.data.message === "NOTMATCH") {
                 window.alert("Passwords do not match")
             }
@@ -35,18 +35,28 @@ const Signup = () => {
             setPancardNumber("");
             setMobileNum("");
             setCpass("");
-            if (response.data.message==="SUCCESS"){
-            navigate('/')
+            if (response.data.message === "SUCCESS") {
+                navigate('/')
             }
         } catch (error) {
             console.log(error);
         }
 
     }
-    
+
     return (
         <>
-                <div className="flex mt-16 flex-col h-full w-full sm:h-screen md:h-screen mb-0 items-center justify-center px-6 py-8 mx-auto lg:py-2 bg-gray-200 dark:bg-gray-900" style={{ overflowX: 'hidden' }}>
+            <style>
+                {`
+                    body, html {
+                        height: 100%;
+                        margin: 0;
+                        background: linear-gradient(to bottom, #4287f5, #ffffff);
+                    }
+                `}
+            </style>
+
+            <div className="flex flex-col h-full w-full sm:h-screen md:h-screen mb-0 items-center justify-center px-6 py-8 mx-auto lg:py-2" style={{ overflowX: 'hidden' }}>
                 <div className="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
                     <div className="p-2 py-6 space-y-2 md:space-y-6 sm:p-8">
                         <h1 className="text-lg font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
@@ -105,7 +115,7 @@ const Signup = () => {
                     </div>
                 </div>
             </div>
-        
+
         </>
     );
 }

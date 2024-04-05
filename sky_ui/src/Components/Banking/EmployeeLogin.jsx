@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import AlternateLayout from "./AlternateLayout";
+import Layout from "./Layout";
 const EmployeeLogin = () => {
 
     const [employeeId, setEmployeeId] = useState("");
@@ -42,6 +44,7 @@ const EmployeeLogin = () => {
                     }
                 `}
             </style>
+            <AlternateLayout/>
             <div className="flex mt-16 flex-col h-full w-full sm:h-screen md:h-screen mb-0 items-center justify-center px-6 py-8 mx-auto lg:py-2 " style={{ overflowX: 'hidden' }}>
                 <div className="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
                     <div className="p-2 py-6 space-y-2 md:space-y-6 sm:p-8">

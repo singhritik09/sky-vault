@@ -2,6 +2,7 @@
 import axios from "axios";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import Layout from "./Layout";
 const Loan = ({ isOpen, onClose }) => {
     const [amount, setAmount] = useState(0);
     const [time, setTime] = useState("");
@@ -33,6 +34,7 @@ const Loan = ({ isOpen, onClose }) => {
 
     return (
         <>
+        <Layout/>
             {/* {isOpen && ( */}
             <div className="mt-48 fixed inset-0 z-50 flex items-center justify-center overflow-x-hidden overflow-y-auto outline-none focus:outline-none">
                 <div className="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">

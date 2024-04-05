@@ -4,8 +4,10 @@ import stackmoney from '../../assets/images/stackmoney.jpg'
 import { SiGmail } from "react-icons/si";
 import { RiCustomerService2Line } from "react-icons/ri";
 import Footer from "./Footer";
+import Layout from "./Layout";
 const Home = () => {
     return (<>
+        <Layout/>
         <br /><br /><br /><br /><br /><br /><br />
         <div className="container h-3/4 items-center justify center ">
 
