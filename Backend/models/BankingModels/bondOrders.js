@@ -4,7 +4,6 @@ const bondOrderSchema = new mongoose.Schema({
     bondId:{
         type:Number,
         required:true,
-        unique:true
     },
     bondName:{
         type:String,

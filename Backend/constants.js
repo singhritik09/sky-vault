@@ -1,5 +1,7 @@
 export const DB_NAME = "skyvault"
-export const MONGODB_URI="mongodb://127.0.0.1:27017"
+// export const MONGODB_URI="mongodb+srv://singhritik09:hashpassword1199@cluster0.au2um80.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
+export const MONGODB_URI="mongodb+srv://singhritik09:hashpassword1199@cluster0.au2um80.mongodb.net"
+export const RECEIVER_EMAIL="singhritik2711@gmail.com"
 export const CORS_ORIGIN="*"
 
 export const ACCESS_TOKEN_SECRET="Hashhashpwssds"

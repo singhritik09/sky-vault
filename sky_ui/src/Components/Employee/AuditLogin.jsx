@@ -32,7 +32,7 @@ const AuditLogin = () => {
             </style>
 
             <AlternateLayout />
-            <h2 className="mt-32 ml-52">Users Login</h2>
+            <h2 className="mt-32 ml-52 text-4xl text-gray-600">Users Login</h2>
 
             <div className="flex">
 

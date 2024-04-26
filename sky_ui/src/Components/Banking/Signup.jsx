@@ -27,6 +27,9 @@ const Signup = () => {
             if (response.data.message === "NOTMATCH") {
                 window.alert("Passwords do not match")
             }
+            if (response.data.message === "Invalid Card") {
+                window.alert("Invalid PAN card")
+            }
 
             console.log("Form submitted")
             setName("");
@@ -36,7 +39,7 @@ const Signup = () => {
             setMobileNum("");
             setCpass("");
             if (response.data.message === "SUCCESS") {
-                navigate('/')
+                navigate('/home')
             }
         } catch (error) {
             console.log(error);

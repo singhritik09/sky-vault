@@ -14,7 +14,10 @@ import bcrypt from 'bcrypt';
 import MongoStore from 'connect-mongo';
 import AuditLogs from "./models/BankingModels/audit.js";
 import axios from "axios";
+import Query from "./models/BankingModels/query.js";
 // import { authenticateEmployee } from './middlewares/employeeLogin.js';
+import sendEmail from './utils/mail.js';
+import { RECEIVER_EMAIL } from "./constants.js";
 const app = express();
 connectDB();
 
@@ -99,19 +102,28 @@ app.post("/signup", async (req, res) => {
   const userId = finalName + "@sky" + generateRandomNumber()
   const existingUser = await BankingUsers.findOne({ $or: [{ email: email }, { mobileNum: mobileNum }] });
   const hashPsw = await bcrypt.hash(password, 12);
+  const panRegex = /^[A-Za-z]{5}\d{4}[A-Za-z]$/;
+
 
   if (existingUser) {
     return res.status(400).json({ message: "PRESENT" });
   }
   else {
+
+    
     try {
+      if (!panRegex.test(pancardNum)) {
+        console.log("Invalid card")
+        return res.status(401).json({ message: "Invalid Card" });
+      }
+
       if (password === cpass) {
         const user = await BankingUsers.create({
           userId: userId,
           name: aname,
           email: email,
           password: hashPsw,
-          pancardNum: pancardNum,
+          pancardNum: pancardNum.toUperCase(),
           mobileNum: mobileNum,
         });
         console.log("Inserted", user);
@@ -169,7 +181,7 @@ app.get("/dashboard", async (req, res) => {
   // }
 
   // Retrieve userId from session
-  var userId="WillShawn@sky260"
+  var userId="checknow@sky736"
   if(req.session.userId){
    userId = req.session.userId;
   }
@@ -190,7 +202,22 @@ app.get("/dashboard", async (req, res) => {
 
 });
 
+app.post("/query",async (req,res)=>{
+    const{email,password,query,description}=req.body
+    const queryIns=await Query.create({
+      email:email,
+      query:query,
+      description:description
+    })
+    console.log("Query Sent")
+    const emailSent = await sendEmail(email,password ,RECEIVER_EMAIL, query, description);
 
+    if (emailSent) {
+      res.status(200).json({ message: "Successful" });
+  } else {
+      res.status(500).json({ message: "Error sending email" });
+  }
+});
 
 
 app.post("/employee-login", async (req, res) => {

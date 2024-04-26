@@ -40,7 +40,7 @@ const UserDashBoard = () => {
                     }
                 `}
             </style>
-            <div className="container mt-20">
+            <div className="container mt-36">
                 <div className="max-w-xs mx-auto rounded overflow-hidden shadow-lg bg-gray-100">
                     <div className="flex justify-center items-center h-40 w-40 ml-20 mt-2">
                         <img className="object-cover w-full h-full rounded-full" src={atm} alt="ATM" />
@@ -53,7 +53,7 @@ const UserDashBoard = () => {
                     </div>
                 </div>
             </div>
-            {/* <TransactionHistory /> */}
+            <TransactionHistory />
         </>
     );
 }
