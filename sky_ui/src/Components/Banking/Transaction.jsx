@@ -6,7 +6,7 @@ const Transaction = () => {
     const [amount, setAmount] = useState(0);
     const [receiverId, setReceiver] = useState("");
     const [password, setPassword] = useState("");
-    const [senderId, setSender] = useState("")
+    const [senderId, setSender] = useState("");
     const navigate = useNavigate();
     async function createTransaction(e) {
         e.preventDefault();

@@ -1,33 +1,30 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import Signup from "./Signup";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-const Login = () => {
 
+const Login = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const navigate = useNavigate();
+
     async function handleLogin(e) {
         e.preventDefault();
         try {
             const response = await axios.post("http://localhost:8000/login", {
                 email, password
             });
-            if (response.data.message === "NOTMATCH") {
-                window.alert("User not registered or invalid password")
-            }
 
-            if (response.data.message === "SUCCESS") {
-                window.alert("Login Successful")
-                navigate('/dashboard')
+            if (response.data.message === "NOTMATCH") {
+                window.alert("User not registered or invalid password");
+            } else if (response.data.message === "SUCCESS") {
+                window.alert("Login Successful");
+                navigate('/dashboard', { state: { email } }); // Pass email to dashboard
             }
             setPassword("");
         } catch (e) {
-            console.log("Error in login", e)
+            console.log("Error in login", e);
         }
-
-
     }
 
     return (

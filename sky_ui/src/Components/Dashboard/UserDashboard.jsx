@@ -1,21 +1,25 @@
 import React, { useEffect, useState } from "react";
 import atm from '../../assets/images/atm.jpg'
 import axios from "axios";
+import { useLocation } from "react-router-dom"; // Import useLocation
 import TransactionHistory from "../Banking/TransactionHistory";
 
 const UserDashBoard = () => {
-    const [user, setUser] = useState(null); // Change initial state to null
-
+    const [user, setUser] = useState(null);
+    const location = useLocation();
+    
     useEffect(() => {
         fetchDetails();
     }, []);
 
     async function fetchDetails() {
         try {
-            const response = await axios.get("http://localhost:8000/dashboard");
+            const { email } = location.state;
 
-            if (response.data.message === "UNAUTHORIZED") {
-                window.alert("User not present")
+            const response = await axios.get(`http://localhost:8000/dashboard?email=${email}`);
+
+            if (response.data.message === "User not found") {
+                window.alert("User not found");
                 window.location.href = "/login";
             } else {
                 setUser(response.data);
@@ -26,7 +30,7 @@ const UserDashBoard = () => {
     }
 
     if (!user) {
-        return <div><br /><br /><br /><br /><br /><br /> Loading...</div>; // You can replace this with a loading spinner or other UI element
+        return <div>Loading...</div>;
     }
 
     return (

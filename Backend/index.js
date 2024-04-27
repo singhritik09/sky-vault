@@ -27,19 +27,11 @@ app.use(cors());
 
 // Configure session middleware with MongoDB store
 app.use(session({
-  secret: 'your_secret_key',
+  secret: 'secretkey123',
   resave: false,
   saveUninitialized: true,
-  // store: MongoStore.create({
-  //   mongoUrl: 'mongodb://127.0.0.1:27017/session_store',
-  //   ttl: 24 * 60 * 60, // session TTL (optional),
-  // }),
-  cookie: {
-    maxAge: 24 * 60 * 60 * 1000 // 1 day
-  },
-  regenerate: false
-
 }));
+
 
 app.get('/', async (req, res) => {
   console.log("Home: ", req.session)
@@ -123,8 +115,10 @@ app.post("/signup", async (req, res) => {
           name: aname,
           email: email,
           password: hashPsw,
-          pancardNum: pancardNum.toUperCase(),
+          pancardNum: pancardNum,
           mobileNum: mobileNum,
+          balance:0,
+          transactionHistory:[]
         });
         console.log("Inserted", user);
         const name = user.name;
@@ -143,63 +137,43 @@ app.post("/signup", async (req, res) => {
 app.post("/login", async (req, res) => {
   const { email, password } = req.body;
 
-  const user = await BankingUsers.findOne({ email: email })
+  const user = await BankingUsers.findOne({ email });
+
   if (!user) {
-    return res.status(202).json({ message: "NOTMATCH" });
+      return res.status(202).json({ message: "NOTMATCH" });
   }
+
   const checkEncrypted = await bcrypt.compare(password, user.password);
+  console.log(checkEncrypted);
+  if (checkEncrypted) {
+      req.session.authenticated = true;
+      req.session.userId = user.userId;
 
-  const check = await BankingUsers.findOne({
-    email: req.body.email,
-    password: req.body.password
+      req.session.isDashboard = false; // Flag to indicate not yet in dashboard
+      req.session.save();
+      console.log("Login session:", req.session.id);
 
-  });
-  const name = user.name;
-  if (check || checkEncrypted) {
-    req.session.authenticated = true
-    req.session.userId = user.userId;
-
-    req.session.isDashboard = false; // Flag to indicate not yet in dashboard
-    req.session.save();
-    console.log("Login session:", req.session.id);
-
-    return res.status(200).json({ message: "SUCCESS", name: name })
-  }
-  else {
-    return res.status(202).json({ message: "NOTMATCH" });
+      return res.status(200).json({ message: "SUCCESS", userId: user.userId });
+  } else {
+      return res.status(202).json({ message: "NOTMATCH" });
   }
 });
 
 app.get("/dashboard", async (req, res) => {
-  // console.log("Session in dashboard:", req.session.id)
-  // if (!req.session.userId) {
-  //   return res.status(401).json({ message: "UNAUTHORIZED" });
-  // }
-  // if (!req.session.isDashboard) {
-  //   console.log("Session in dashboard:", req.session.id);
-  //   req.session.isDashboard = true; // Set flag to prevent further logging
-  // }
+  const email = req.query.email;
 
-  // Retrieve userId from session
-  var userId="checknow@sky736"
-  if(req.session.userId){
-   userId = req.session.userId;
-  }
   try {
-    // Fetch user data from database using userId
-    const user = await BankingUsers.findOne({ userId: userId });
+      const user = await BankingUsers.findOne({ email });
 
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
+      if (!user) {
+          return res.status(404).json({ message: "User not found" });
+      }
 
-    // Return user data
-    res.status(200).json(user);
+      res.status(200).json(user);
   } catch (error) {
-    console.error('Error fetching user data:', error);
-    res.status(500).json({ message: "Internal server error" });
+      console.error('Error fetching user data:', error);
+      res.status(500).json({ message: "Internal server error" });
   }
-
 });
 
 app.post("/query",async (req,res)=>{
@@ -342,11 +316,15 @@ app.post("/transaction", async (req, res) => {
   const sender = await BankingUsers.findOne({ userId: senderId });
   const receiver = await BankingUsers.findOne({ userId: receiverId });
   const transactionAmount = parseFloat(amount);
+  console.log(sender.email);
+  console.log(receiver.email)
+  const checkEncrypted = await bcrypt.compare(password, sender.password);
 
   if (!sender || !receiver) {
     return res.status(202).json({ message: "NOTEXIST" });
   }
-  if (sender.password !== password) {
+  if (!checkEncrypted) {
+    console.log("Not match pass")
     return res.status(202).json({ message: "NOTMATCH" });
   } else if (senderId === receiverId) {
     return res.status(202).json({ message: "IDMATCH" });
@@ -429,22 +407,23 @@ app.post("/bonds", async (req, res) => {
 
 app.get("/transaction-history", async (req, res) => {
   try {
-    const userId = "checknow@sky736";
-    const user = await BankingUsers.findOne({ userId: userId });
+      const userId = req.session.userId; // Get userId from session
+      const user = await BankingUsers.findOne({ userId });
 
-    if (!user) {
-      console.log("User not found");
-      return res.status(404).json({ message: "User not found" });
-    }
+      if (!user) {
+          console.log("User not found");
+          return res.status(404).json({ message: "User not found" });
+      }
 
-    const data = user.transactionHistory;
+      const transactionHistory = user.transactionHistory;
 
-    res.send(data);
+      res.status(200).json(transactionHistory);
   } catch (error) {
-    console.error("Error:", error);
-    res.status(500).json({ message: "Internal Server Error" });
+      console.error("Error:", error);
+      res.status(500).json({ message: "Internal Server Error" });
   }
 });
+
 
 app.get("/audit-logs",async(req,res)=>{
   const data=await AuditLogs.find({}).sort({ date: -1 });;

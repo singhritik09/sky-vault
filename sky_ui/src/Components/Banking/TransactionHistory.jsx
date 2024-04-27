@@ -1,17 +1,19 @@
 import axios from 'axios';
 import React, { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 
 const TransactionHistory = () => {
     const [transactions, setTransactions] = useState([]);
+    const location = useLocation();
 
     useEffect(() => {
         fetchTransactionHistory();
     }, []);
 
     async function fetchTransactionHistory() {
-      // e.preventDefault();
         try {
             const response = await axios.get("http://localhost:8000/transaction-history");
+
             setTransactions(response.data);
         } catch (error) {
             console.log("Error:", error);
@@ -20,11 +22,8 @@ const TransactionHistory = () => {
 
     return (
         <>
-            <br/><br/><br/><br/><br/><br/>
+            <br /><br /><br /><br /><br /><br />
             <div className="overflow-x-auto mt-42 flex justify-center align-center">
-              {/* <form action="" onSubmit={fetchTransactionHistory}>
-                <button type='submit'>Submit</button>
-              </form> */}
                 <table className="border-collapse">
                     <thead>
                         <tr>
