@@ -31,7 +31,6 @@ function App() {
         <Route path="/loan-applications" element={<PageTransition><LoanApplications /></PageTransition>} />
         <Route path="/employee-login" element={<PageTransition><EmployeeLogin /></PageTransition>} />
         <Route path="/transaction" element={<PageTransition><Transaction /></PageTransition>} />
-        <Route path="/transaction-history" element={<PageTransition><TransactionHistory /></PageTransition>} />
         <Route path="/dashboard" element={<PageTransition><UserDashboard /></PageTransition>} />
         <Route path="/approved-loans" element={<PageTransition><ApprovedLoans /></PageTransition>} />
         <Route path="/audit-logs" element={<PageTransition><AuditLogin /></PageTransition>} />

@@ -7,8 +7,6 @@ const loanSchema=new mongoose.Schema({
         unique:true
     },
     userId: {
-        // type: mongoose.Schema.Types.ObjectId,
-        // ref: "BankingUsers",
         type:String,
         required: true
     },

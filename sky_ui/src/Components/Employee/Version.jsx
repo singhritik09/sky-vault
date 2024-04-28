@@ -39,10 +39,10 @@ const Version = () => {
                         <a href="https://github.com/singhritik09/sky-vault" className="text-gray-800 hover:underline">
                             <FaGithub />
                         </a>
-                        <a href="https://www.gmail.com" className='ml-4 text-red-600'>
+                        <a href="mailto:singhritik2711@gmail.com" className='ml-4 text-red-600'>
                             <BiLogoGmail />
                         </a>
-                        <a href="https://www.gmail.com" className='ml-4 text-blue-600'>
+                        <a href="https://www.linkedin.com/in/ritik-singh-71346b209/" className='ml-4 text-blue-600'>
                             <FaLinkedin />
                         </a>
                     </div>

@@ -221,13 +221,13 @@ app.post("/employee-login", async (req, res) => {
 });
 
 app.post("/loan", async (req, res) => {
-  const { amount, time, dateOfBirth, pancardNum } = req.body
+  const { amount, time, pancardNum } = req.body
   const user = await BankingUsers.findOne({ pancardNum: pancardNum })
   if (!user) {
     return res.status(202).json({ message: "CREATE" })
   }
 
-  if (amount < 20000) {
+  if (amount < 5000) {
     return res.status(400).json({ message: "Low amount" })
   }
   const loanId = generateLoanId();
@@ -235,7 +235,7 @@ app.post("/loan", async (req, res) => {
   const interest = 10;
   const amountPermonth = calculateAmountPerMonth(amount, time, interest);
 
-  const issueDate = getCurrentDate();
+  const issueDate = getCurrentDate().toString();
   const returnDate = "24/03/2024";
   const returned = false;
   const mobileNum = user.mobileNum;
@@ -406,9 +406,10 @@ app.post("/bonds", async (req, res) => {
 })
 
 app.get("/transaction-history", async (req, res) => {
+  const email = req.query.email;
   try {
       const userId = req.session.userId; // Get userId from session
-      const user = await BankingUsers.findOne({ userId });
+      const user = await BankingUsers.findOne({ email });
 
       if (!user) {
           console.log("User not found");

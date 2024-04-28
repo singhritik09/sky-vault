@@ -61,7 +61,9 @@ const Home = () => {
                     <p className="text-lg text-gray-500 text-center mt-16"> Have any queries? Any trouble on the platform?<br />Write an email or contact us.</p>
 
                     <div className="flex items-center justify-center text-4xl mt-5 text-gray-600 cursor-pointer mb-10">
-                        <RiCustomerService2Line />
+                        <a href="tel:8431102475"><RiCustomerService2Line /></a>
+
+
                         <div className="ml-10 h-2/3">
 
                             <Popup trigger={<button> <SiGmail /></button>} modal nested>

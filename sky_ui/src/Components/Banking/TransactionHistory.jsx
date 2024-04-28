@@ -12,7 +12,8 @@ const TransactionHistory = () => {
 
     async function fetchTransactionHistory() {
         try {
-            const response = await axios.get("http://localhost:8000/transaction-history");
+            const email = location.state ? location.state.email : null;
+            const response = await axios.get(`http://localhost:8000/transaction-history?email=${email}`);
 
             setTransactions(response.data);
         } catch (error) {

@@ -3,10 +3,9 @@ import axios from "axios";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Layout from "./Layout";
-const Loan = ({ isOpen, onClose }) => {
+const Loan = () => {
     const [amount, setAmount] = useState(0);
     const [time, setTime] = useState("");
-    const [dateOfBirth, setDOB] = useState("");
     const [pancardNum, setPan] = useState("");
     const navigate = useNavigate();
     async function handleSubmit(e) {
@@ -14,7 +13,7 @@ const Loan = ({ isOpen, onClose }) => {
 
         try {
             const response = await axios.post("http://localhost:8000/loan",
-                { amount, time, dateOfBirth, pancardNum })
+                { amount, time, pancardNum })
             if (response.status === 400 || response.data.message === "LOGINREQ") {
                 window.alert("You need to login first");
             }
@@ -24,7 +23,7 @@ const Loan = ({ isOpen, onClose }) => {
 
             if (response.data.message === 'SUCCESS') {
                 window.alert("Application Successful");
-                navigate('/')
+                navigate('/home')
             }
         }
         catch (e) {
@@ -35,14 +34,13 @@ const Loan = ({ isOpen, onClose }) => {
     return (
         <>
         <Layout/>
-            {/* {isOpen && ( */}
             <div className="mt-48 fixed inset-0 z-50 flex items-center justify-center overflow-x-hidden overflow-y-auto outline-none focus:outline-none">
                 <div className="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
                     <div className="p-2 py-6 space-y-2 md:space-y-6 sm:p-8">
                         <h1 className="text-lg font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
                             Apply for instant loan
                         </h1>
-                        <form className="space-y-4 md:space-y-2" method="post" onSubmit={handleSubmit} >
+                        <form className="space-y-4 md:space-y-2" method="post" >
 
                             <div>
                                 <label for="amount" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Amount</label>
@@ -65,13 +63,7 @@ const Loan = ({ isOpen, onClose }) => {
                                 </select>
                             </div>
 
-                            <div>
-                                <label for="dob" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Date of birth</label>
-                                <input
-                                    value={dateOfBirth}
-                                    onChange={(e) => { setDOB(e.target.value) }}
-                                    type="text" name="dob" id="dob" className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-green-500 dark:focus:border-green-500" placeholder="dd/mm/yyyy" required="true" />
-                            </div>
+
                             <div>
                                 <label for="pan" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">PAN Card</label>
                                 <input
@@ -81,13 +73,11 @@ const Loan = ({ isOpen, onClose }) => {
                             </div>
 
 
-                            <button type="submit" className="ml-36 text-white bg-green-700 hover:bg-green-800 focus:ring-4 font-medium rounded-lg text-sm px-5 py-2 text-center ">Apply</button>
+                            <button type="submit" className="ml-36 text-white bg-green-700 hover:bg-green-800 focus:ring-4 font-medium rounded-lg text-sm px-5 py-2 text-center " onClick={handleSubmit}>Apply</button>
                         </form>
                     </div>
                 </div>
             </div>
-            {/* )} */}
-            <div className="opacity-25 fixed inset-0 z-40 bg-black"></div>
         </>
     );
 };
