@@ -23,15 +23,17 @@ connectDB();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(cors());
-
-// Configure session middleware with MongoDB store
-app.use(session({
-  secret: 'secretkey123',
-  resave: false,
-  saveUninitialized: true,
+app.use(cors({
+  origin: 'http://localhost:3000',
+  credentials: true // Enable sending cookies
 }));
 
+app.use(session({
+  secret: 'your_secret_here', // Add your secret
+  resave: false,
+  saveUninitialized: false,
+  cookie: { secure: false } // Set secure: true if using HTTPS
+}));
 
 app.get('/', async (req, res) => {
   console.log("Home: ", req.session)
@@ -137,33 +139,45 @@ app.post("/signup", async (req, res) => {
 app.post("/login", async (req, res) => {
   const { email, password } = req.body;
 
-  const user = await BankingUsers.findOne({ email });
+  try {
+      const user = await BankingUsers.findOne({ email });
 
-  if (!user) {
-      return res.status(202).json({ message: "NOTMATCH" });
-  }
+      if (!user) {
+          return res.status(202).json({ message: "NOTMATCH" });
+      }
 
-  const checkEncrypted = await bcrypt.compare(password, user.password);
-  console.log(checkEncrypted);
-  if (checkEncrypted) {
-      req.session.authenticated = true;
-      req.session.userId = user.userId;
+      const checkEncrypted = await bcrypt.compare(password, user.password);
+      
+      if (checkEncrypted) {
+          req.session.authenticated = true;
+          req.session.userId = user.userId;
+          req.session.isDashboard = false;
+          
+          await req.session.save();
 
-      req.session.isDashboard = false; // Flag to indicate not yet in dashboard
-      req.session.save();
-      console.log("Login session:", req.session.id);
-
-      return res.status(200).json({ message: "SUCCESS", userId: user.userId });
-  } else {
-      return res.status(202).json({ message: "NOTMATCH" });
+          console.log("Login session:", req.session);
+          return res.status(200).json({ message: "SUCCESS", userId: user.userId });
+      } else {
+          return res.status(202).json({ message: "NOTMATCH" });
+      }
+  } catch (error) {
+      console.error('Error during login:', error);
+      return res.status(500).json({ message: "Internal server error" });
   }
 });
 
-app.get("/dashboard", async (req, res) => {
-  const email = req.query.email;
 
+app.get("/dashboard", async (req, res) => {
   try {
-      const user = await BankingUsers.findOne({ email });
+      if (!req.session.authenticated) {
+          return res.status(401).json({ message: "Unauthorized" });
+      }
+
+      const userId = req.session.userId;
+
+      console.log("Dashboard:", req.session);
+
+      const user = await BankingUsers.findOne({ userId });
 
       if (!user) {
           return res.status(404).json({ message: "User not found" });
@@ -175,6 +189,8 @@ app.get("/dashboard", async (req, res) => {
       res.status(500).json({ message: "Internal server error" });
   }
 });
+
+
 
 app.post("/query",async (req,res)=>{
     const{email,password,query,description}=req.body
@@ -406,10 +422,9 @@ app.post("/bonds", async (req, res) => {
 })
 
 app.get("/transaction-history", async (req, res) => {
-  const email = req.query.email;
+  const userId = req.session.userId;
   try {
-      const userId = req.session.userId; // Get userId from session
-      const user = await BankingUsers.findOne({ email });
+      const user = await BankingUsers.findOne({ userId });
 
       if (!user) {
           console.log("User not found");

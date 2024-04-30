@@ -16,7 +16,7 @@ const UserDashBoard = () => {
         try {
             const { email } = location.state;
 
-            const response = await axios.get(`http://localhost:8000/dashboard?email=${email}`);
+            const response = await axios.get("http://localhost:8000/dashboard");
 
             if (response.data.message === "User not found") {
                 window.alert("User not found");
