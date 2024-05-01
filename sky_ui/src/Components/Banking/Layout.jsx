@@ -1,7 +1,15 @@
-import React from "react";
+import React, { useState } from "react";
 import { FaUserGear } from "react-icons/fa6";
+import axios from "axios";
+import AuthButton from "../Dashboard/AuthButton";
 
 const Layout = () => {
+    const [isLoggedOut, setIsLoggedOut] = useState(false);
+
+    const handleLogout = () => {
+        setIsLoggedOut(true); // Set state to indicate logout
+    };
+
     return (
         <div className="container">
             <nav className="bg-white dark:bg-gray-800 fixed w-full h-32 z-20 top-0 start-0 border-b border-gray-200 dark:border-gray-600">
@@ -9,9 +17,10 @@ const Layout = () => {
                     <a href="/home" className="flex items-center space-x-3 rtl:space-x-reverse">
                         <span className="self-center text-3xl font-semibold whitespace-nowrap dark:text-green-600 mt-8">Sky Vault</span>
                     </a>
-                    <div className="flex md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse items-center"> {/* Added items-center class */}
-                        <button type="button" className="text-white bg-green-700 mt-8 hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm px-4 py-2 text-center dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"><a href="/login">Login</a>  </button>
-                        <div className="text-gray-200 text-2xl mt-9 ml-4 flex justify-end w-full cursor-pointer"> {/* Added flex and justify-end classes */}
+                    <div className="flex md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse items-center">
+                        {/* Pass onLogout function to AuthButton */}
+                        <AuthButton onLogout={handleLogout} /> 
+                        <div className="text-gray-200 text-2xl mt-9 ml-4 flex justify-end w-full cursor-pointer">
                            <a href="/dashboard"> <FaUserGear/></a>
                         </div>
                     </div>
@@ -39,7 +48,6 @@ const Layout = () => {
             </nav>
         </div>
     );
-    
 }
 
 export default Layout;

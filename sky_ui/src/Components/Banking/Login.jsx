@@ -19,7 +19,7 @@ const Login = () => {
                 window.alert("User not registered or invalid password");
             } else if (response.data.message === "SUCCESS") {
                 window.alert("Login Successful");
-                navigate('/dashboard', { state: { email } }); // Pass email to dashboard
+                navigate('/home', { state: { email } }); // Pass email to dashboard
             }
             setPassword("");
         } catch (e) {

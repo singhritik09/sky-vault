@@ -16,6 +16,7 @@ import ApprovedLoans from './Components/Banking/ApprovedLoans';
 import Choice from './Components/Choice';
 import AuditLogin from './Components/Employee/AuditLogin';
 import Version from './Components/Employee/Version';
+import About from './Components/Banking/About';
 
 function App() {
   return (
@@ -24,6 +25,8 @@ function App() {
       <Routes>
       <Route path="/" element={<PageTransition><Choice /></PageTransition>} />
         <Route path="/Home" element={<PageTransition><Home /></PageTransition>} />
+        <Route path="/about" element={<PageTransition><About /></PageTransition>} />
+
         <Route path="/loan" element={<PageTransition><Loan /></PageTransition>} />
         <Route path="/login" element={<PageTransition><Login /></PageTransition>} />
         <Route path="/signup" element={<PageTransition><Signup /></PageTransition>} />

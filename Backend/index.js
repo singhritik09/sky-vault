@@ -135,6 +135,13 @@ app.post("/signup", async (req, res) => {
     }
   }
 });
+const authenticate = (req, res, next) => {
+  if (req.session.authenticated) {
+      next(); 
+  } else {
+      res.status(401).json({ message: "Unauthorized" }); // User is not authenticated, send unauthorized response
+  }
+};
 
 app.post("/login", async (req, res) => {
   const { email, password } = req.body;
@@ -166,16 +173,36 @@ app.post("/login", async (req, res) => {
   }
 });
 
+app.post("/logout",async(req,res)=>{
 
-app.get("/dashboard", async (req, res) => {
-  try {
-      if (!req.session.authenticated) {
-          return res.status(401).json({ message: "Unauthorized" });
+  try{
+    req.session.destroy((err) => {
+      if (err) {
+          console.error('Error destroying session:', err);
+          return res.status(500).json({ message: "Internal server error" });
       }
+      console.log("Session destroyed");
+      return res.status(200).json({ message: "Logged out successfully" });
+    });
+  }catch(error){
+    console.log("Error in logout");
+    return res.status(500).json({"message":"Internal Server Error"})
+  }
 
+});
+
+// Assuming you have your Express server set up with the authenticate middleware
+
+// Route with authentication middleware
+app.get("/auth/status", authenticate, (req, res) => {
+  // This route will only be accessible to authenticated users
+  // If the user reaches here, it means they are authenticated
+  res.status(200).json({ authenticated: true });
+});
+
+app.get("/dashboard", authenticate, async (req, res) => {
+  try {
       const userId = req.session.userId;
-
-      console.log("Dashboard:", req.session);
 
       const user = await BankingUsers.findOne({ userId });
 
@@ -183,13 +210,13 @@ app.get("/dashboard", async (req, res) => {
           return res.status(404).json({ message: "User not found" });
       }
 
-      res.status(200).json(user);
+      // Send user data along with authentication status
+      res.status(200).json({ authenticated: true, user });
   } catch (error) {
       console.error('Error fetching user data:', error);
       res.status(500).json({ message: "Internal server error" });
   }
 });
-
 
 
 app.post("/query",async (req,res)=>{
