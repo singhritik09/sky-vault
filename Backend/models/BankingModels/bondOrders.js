@@ -5,6 +5,10 @@ const bondOrderSchema = new mongoose.Schema({
         type:Number,
         required:true,
     },
+    userId:{
+        type:String,
+        required:true,
+    },
     bondName:{
         type:String,
         required:true,

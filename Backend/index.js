@@ -354,8 +354,9 @@ app.get("/approved-loans",async(req,res)=>{
 })
 
 app.post("/transaction", async (req, res) => {
-  const { amount, senderId, receiverId, password } = req.body;
-
+  const { amount, receiverId, password } = req.body;
+  const userId=req.session.userId;
+  const senderId=userId;
   const sender = await BankingUsers.findOne({ userId: senderId });
   const receiver = await BankingUsers.findOne({ userId: receiverId });
   const transactionAmount = parseFloat(amount);
@@ -420,46 +421,69 @@ app.post("/transaction", async (req, res) => {
 
 
 app.get("/bonds", async (req, res) => {
+  const userId=req.session.userId;
   const data = await Bonds.find({});
   res.send(data);
 })
 
 app.post("/bonds", async (req, res) => {
-  const { bondId, quantity } = req.body;
+  
+  const userId=req.session.userId;
+  const user=await BankingUsers.findOne({userId:userId});
+  console.log("userID:",userId);
+  const { bondId, quantity,password } = req.body;
   const bond = await Bonds.findOne({ bondId: bondId })
   const transactionAmount = parseInt(bond.price);
   const total = transactionAmount * quantity;
+  const checkEncrypted = await bcrypt.compare(password, user.password);
 
-  try {
-    const newTransaction = await BondsOrder.create({
-      bondId: bondId,
-      bondName: bond.bondName,
-      price: bond.price,
-      interest: bond.interest,
-      totalAmount: total
-    })
-    bond.maxAvailable -= quantity;
-    await bond.save();
-    console.log(newTransaction);
-  }
-  catch (e) {
-    console.log("Error:", e)
+  if(checkEncrypted){
+    try {
+      const newTransaction = await BondsOrder.create({
+        bondId: bondId,
+        userId:userId,
+        bondName: bond.bondName,
+        price: bond.price,
+        interest: bond.interest,
+        totalAmount: total
+      })
+      bond.maxAvailable -= quantity;
+      await bond.save();
+      const order ={
+        bondId: bondId,
+        userId:userId,
+        bondName: bond.bondName,
+        price: bond.price,
+        interest: bond.interest,
+        totalAmount: total
+      }
+
+      user.balance -= total;
+  
+      user.bondPurchase.push(order);
+      await user.save();
+      console.log(user.bondPurchase);
+    }
+    catch (e) {
+      console.log("Error:", e)
+    }
+  
   }
   return res.status(200).json({ message: "SUCCESS" });
-})
+});
 
 app.get("/transaction-history", async (req, res) => {
   const userId = req.session.userId;
   try {
-      const user = await BankingUsers.findOne({ userId });
+      const user= await BankingUsers.findOne({ userId });
 
       if (!user) {
           console.log("User not found");
           return res.status(404).json({ message: "User not found" });
       }
 
-      const transactionHistory = user.transactionHistory;
-
+      let transactionHistory = user.transactionHistory;
+      
       res.status(200).json(transactionHistory);
   } catch (error) {
       console.error("Error:", error);

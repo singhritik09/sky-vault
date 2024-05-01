@@ -23,8 +23,35 @@ const transactionSchema = new mongoose.Schema({
         type: Boolean,
     },
     time: {
-        type: String,
+        type: Date,
     }
+});
+const bondOrderSchema = new mongoose.Schema({
+    bondId:{
+        type:Number,
+        required:true,
+    },
+    userId:{
+        type:String,
+        required:true,
+    },
+    bondName:{
+        type:String,
+        required:true,
+    },
+    price:{
+        type:Number,
+        required:true,
+    },
+    interest:{
+        type:Number,
+        required:true
+    },
+    totalAmount:{
+        type:Number,
+        required:true
+    }
+
 });
 
 const userSchema = new mongoose.Schema({
@@ -54,9 +81,9 @@ const userSchema = new mongoose.Schema({
     balance:{
         type:Number,
     },
-    transactionHistory:[transactionSchema]
-    
-})
+    transactionHistory:[transactionSchema],
+    bondPurchase:[bondOrderSchema],
+});
 
 const BankingUsers = mongoose.model("bankingusers", userSchema)
 

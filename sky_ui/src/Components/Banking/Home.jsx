@@ -79,11 +79,11 @@ const Home = () => {
                                                     type="email" id="email" className="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5  dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light" placeholder="name@flowbite.com" required />
                                             </div>
                                             <div className="mb-5">
-                                                <label for="password" className="block mb-2 text-sm font-medium text-gray-600 ">Your email</label>
+                                                <label for="password" className="block mb-2 text-sm font-medium text-gray-600 ">Password</label>
                                                 <input
                                                     value={password}
                                                     onChange={(e) => setPassword(e.target.value)}
-                                                    type="password" id="password" className="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5  dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light" placeholder="name@flowbite.com" required />
+                                                    type="password" id="password" className="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5  dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light" placeholder="••••••••" required />
                                             </div>
 
                                             <div className="mb-5">
@@ -94,7 +94,7 @@ const Home = () => {
                                                     type="text" id="password" className="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5  dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light" required />  {/* Changed type to "text" for query/complaint */}
                                             </div>
                                             <div className="mb-5">
-                                                <label for="repeat-password" className="block mb-2 text-sm font-medium text-gray-600">Repeat password</label>
+                                                <label for="repeat-password" className="block mb-2 text-sm font-medium text-gray-600">Description</label>
                                                 <input
                                                     value={description}
                                                     onChange={(e) => setDesc(e.target.value)}
