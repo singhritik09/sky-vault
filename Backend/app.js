@@ -25,7 +25,7 @@ connectDB();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors({
-  origin: ['http://localhost:3000',"http://13.239.114.129",],
+  origin: ['http://localhost:3000',"http://13.239.114.129"],
   credentials: true // Enable sending cookies
 }));
 
