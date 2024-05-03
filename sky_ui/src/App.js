@@ -17,7 +17,8 @@ import Choice from './Components/Choice';
 import AuditLogin from './Components/Employee/AuditLogin';
 import Version from './Components/Employee/Version';
 import About from './Components/Banking/About';
-
+import FileUploadForm from './Components/Employee/FileUploadForm';
+import UploadedFiles from './Components/Employee/UploadedFiles';
 function App() {
   return (
     <Router>
@@ -38,6 +39,9 @@ function App() {
         <Route path="/approved-loans" element={<PageTransition><ApprovedLoans /></PageTransition>} />
         <Route path="/audit-logs" element={<PageTransition><AuditLogin /></PageTransition>} />
         <Route path="/version" element={<PageTransition><Version /></PageTransition>} />
+        <Route path="/upload-form" element={<PageTransition><FileUploadForm /></PageTransition>} />
+
+        <Route path="/files" element={<PageTransition><UploadedFiles /></PageTransition>} />
 
       </Routes>
     </Router>

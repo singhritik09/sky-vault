@@ -18,6 +18,8 @@ import Query from "./models/BankingModels/query.js";
 // import { authenticateEmployee } from './middlewares/employeeLogin.js';
 import sendEmail from './utils/mail.js';
 import { RECEIVER_EMAIL } from "./constants.js";
+import multer from "multer";
+import File from "./models/BankingModels/uploads.js";
 const app = express();
 connectDB();
 
@@ -37,8 +39,30 @@ app.use(session({
 
 app.get('/', async (req, res) => {
   console.log("Home: ", req.session)
-  res.send(user);
+  res.send("user");
 });
+
+const storage = multer.memoryStorage();
+const upload = multer({ storage });
+
+// Define route for file upload
+app.post('/upload-form', upload.single('file'), async (req, res) => {
+  try {
+    const { originalname, buffer } = req.file;
+
+    const fileExtension = originalname.split('.').pop().toLowerCase();
+    if (fileExtension === 'exe' || fileExtension === 'js') {
+      return res.status(400).json({ message: "NOTALLOWED" });
+    }
+
+    const newFile = await File.create({ filename: originalname, data: buffer });
+    console.log("File uploaded")
+    res.status(201).send('File uploaded successfully');
+  } catch (err) {
+    console.error(err);
+  }
+});
+
 function generateRandomNumber() {
   return Math.floor(100 + Math.random() * 900);
 }
@@ -497,32 +521,26 @@ app.get("/audit-logs",async(req,res)=>{
   res.send(data);
 })
 
-// app.get('/version', async (req, res) => {
-//   try {
-//     const owner = 'singhritik09';
-//     const repo = 'sky-vault';
-//     const response = await axios.get('https://api.github.com/repos/singhritik09/sky-vault/commits');
+app.get('/files', async (req, res) => {
+  try {
+    const files = await File.find();
+    
+    // Decrypt encrypted data
+    const decryptedFiles = files.map(file => {
+      return {
+        filename: file.filename,
+        // Assuming the data is encrypted with base64, you can change this according to your encryption method
+        data: file.data.toString('utf-8') // Decrypt the data here
+      };
+    });
+    
+    res.status(200).json(decryptedFiles);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Server error');
+  }
+});
 
-//     const commits = response.data.map(commit => ({
-//       sha: commit.sha,
-//       message: commit.commit.message,
-//       committer: {
-//         name: commit.commit.committer.name,
-//         email: commit.commit.committer.email
-//       },
-//       date: commit.commit.committer.date,
-//       // Add repository name property
-//       repository: {
-//         name: repo // Use the defined repo variable
-//       }
-//     }));
-
-//     res.json(commits);
-//   } catch (error) {
-//     console.error('Error fetching commits:', error);
-//     res.status(500).json({ error: 'Failed to fetch commit history' });
-//   }
-// });
 
 
 const port = process.env.PORT || 8000;
