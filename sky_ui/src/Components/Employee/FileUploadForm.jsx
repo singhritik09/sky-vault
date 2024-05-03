@@ -1,6 +1,6 @@
 // FileUploadForm.js
 import React, { useState } from 'react';
-import axios from 'axios';
+import axios1 from "../../axiosInstance";
 
 const FileUploadForm = () => {
   const [file, setFile] = useState(null);
@@ -15,7 +15,7 @@ const FileUploadForm = () => {
     formData.append('file', file);
 
     try {
-      const response=await axios.post('http://localhost:8000/upload-form', formData, {
+      const response=await axios1.post('/upload-form', formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
         }

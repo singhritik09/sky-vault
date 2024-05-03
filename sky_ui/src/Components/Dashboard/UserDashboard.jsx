@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
 import atm from '../../assets/images/atm.jpg'
-import axios from "axios";
+import axios1 from "../../axiosInstance";
 import { useLocation } from "react-router-dom";
 import TransactionHistory from "../Banking/TransactionHistory";
 import background from '../../assets/images/background2.jpg'
+
 const UserDashBoard = () => {
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true); // Add loading state
@@ -15,7 +16,7 @@ const UserDashBoard = () => {
 
     async function fetchDetails() {
         try {
-            const response = await axios.get("http://localhost:8000/dashboard");
+            const response = await axios1.get("/dashboard");
 
             if (response.data.authenticated) {
                 setUser(response.data.user);

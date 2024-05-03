@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios1 from "../../axiosInstance";
 import React, { useState } from "react";
 import Popup from 'reactjs-popup';
 
@@ -20,7 +20,7 @@ const Card = ({ bondId, name, price, rating }) => {
 
     async function buyBond(bondId) {
         try {
-            await axios.post("http://localhost:8000/bonds", {
+            await axios1.post("/bonds", {
                 bondId: bondId,
                 quantity: quantity,
                 password:password

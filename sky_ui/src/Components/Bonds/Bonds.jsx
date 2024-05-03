@@ -1,6 +1,6 @@
 import React, { useState,useEffect } from "react";
 import Card from './Card';
-import axios from "axios";
+import axios1 from "../../axiosInstance";
 import Layout from "../Banking/Layout";
 const Bonds = () => {
 
@@ -9,7 +9,7 @@ const Bonds = () => {
     useEffect(() => {
         async function fetchData() {
             try {
-                const response = await axios.get("http://localhost:8000/bonds");
+                const response = await axios1.get("/bonds");
                 setBonds(response.data);
             } catch (error) {
                 console.error("Error fetching bonds:", error);

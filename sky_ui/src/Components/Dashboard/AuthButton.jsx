@@ -1,6 +1,6 @@
 // AuthButton.js
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import axios1 from "../../axiosInstance";
 
 const AuthButton = ({ onLogout }) => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -12,7 +12,7 @@ const AuthButton = ({ onLogout }) => {
 
     const checkAuthStatus = async () => {
         try {
-            const response = await axios.get('http://localhost:8000/auth/status');
+            const response = await axios1.get('/auth/status');
             setIsLoggedIn(response.data.authenticated);
         } catch (error) {
             console.error('Error checking authentication status:', error);
@@ -21,7 +21,7 @@ const AuthButton = ({ onLogout }) => {
 
     const handleLogout = async () => {
         try {
-            await axios.post('http://localhost:8000/logout');
+            await axios1.post('/logout');
             setIsLoggedIn(false); // Update state to reflect logout
             // Call onLogout to notify the parent component about the logout
             onLogout();

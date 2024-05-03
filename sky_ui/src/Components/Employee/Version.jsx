@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import axios1 from "../../axiosInstance";
 import bankimage from '../../assets/images/bankimage.jpg'
 import AlternateLayout from '../Banking/AlternateLayout';
 import { FaGithub } from "react-icons/fa";

@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios1 from "../../axiosInstance";
 import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 
@@ -13,7 +13,7 @@ const TransactionHistory = () => {
     async function fetchTransactionHistory() {
         try {
             const email = location.state ? location.state.email : null;
-            const response = await axios.get(`http://localhost:8000/transaction-history?email=${email}`);
+            const response = await axios1.get(`/transaction-history?email=${email}`);
 
             setTransactions(response.data);
         } catch (error) {

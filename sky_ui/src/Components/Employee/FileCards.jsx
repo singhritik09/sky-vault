@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import axios1 from "../../axiosInstance";
 
 const FileCards = () => {
   const [files, setFiles] = useState([]);
@@ -12,7 +12,7 @@ const FileCards = () => {
 
   const fetchFiles = async () => {
     try {
-      const response = await axios.get('http://localhost:8000/files');
+      const response = await axios1.get('/files');
       setFiles(response.data);
     } catch (error) {
       console.error('Error fetching files:', error);

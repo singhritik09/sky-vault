@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import axios from "axios";
+import axios1 from "../../axiosInstance";
 import { useNavigate } from "react-router-dom";
 import AlternateLayout from "./AlternateLayout";
 import Layout from "./Layout";
@@ -12,7 +12,7 @@ const EmployeeLogin = () => {
     async function handleLogin(e) {
         e.preventDefault();
         try {
-            const response = await axios.post("http://localhost:8000/employee-login", {
+            const response = await axios1.post("/employee-login", {
                 employeeId, password
             });
             if (response.data.message === "NOTMATCH") {

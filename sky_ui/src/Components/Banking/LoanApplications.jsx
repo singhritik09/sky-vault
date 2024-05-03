@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import axios1 from "../../axiosInstance";
 import { FaCheck } from "react-icons/fa6";
 import { RxCross2 } from "react-icons/rx";
 import AlternateLayout from "./AlternateLayout";
@@ -13,7 +13,7 @@ const LoanApplications = () => {
     const fetchLoans = async () => {
         try {
             console.log("Hello")
-            const response = await axios.get("http://localhost:8000/loan-applications");
+            const response = await axios1.get("/loan-applications");
             setLoans(response.data);
         } catch (error) {
             console.error("Error fetching loans:", error);
@@ -26,7 +26,7 @@ const LoanApplications = () => {
 
 
     async function handleApprove(loanId) {
-        const response = await axios.post("http://localhost:8000/loan-applications", {
+        const response = await axios1.post("/loan-applications", {
             loanId: loanId,
             approve: true
         })
@@ -37,7 +37,7 @@ const LoanApplications = () => {
     }
 
     async function handleReject(loanId) {
-        const response = await axios.post("http://localhost:8000/loan-applications", {
+        const response = await axios1.post("/loan-applications", {
             loanId: loanId,
             approve: false
         })

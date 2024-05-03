@@ -1,5 +1,5 @@
 // LoanModal.js
-import axios from "axios";
+import axios1 from "../../axiosInstance";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Layout from "./Layout";
@@ -12,7 +12,7 @@ const Loan = () => {
         e.preventDefault();
 
         try {
-            const response = await axios.post("http://localhost:8000/loan",
+            const response = await axios1.post("/loan",
                 { amount, time, pancardNum })
             if (response.status === 400 || response.data.message === "LOGINREQ") {
                 window.alert("You need to login first");

@@ -8,7 +8,7 @@ import Layout from "./Layout";
 import Popup from 'reactjs-popup';
 import 'reactjs-popup/dist/index.css';
 import { IoMdClose } from "react-icons/io";
-import axios from "axios";
+import axios1 from "../../axiosInstance";
 
 const Home = () => {
     const [email, setEmail] = useState("");
@@ -18,7 +18,7 @@ const Home = () => {
 
     async function handleSubmit() {
         try{
-        const res = await axios.post("http://localhost:8000/query", { email, password,query, description })
+        const res = await axios1.post("/query", { email, password,query, description })
         }
         catch(error){
             console.log("Error")

@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios1 from "../../axiosInstance";
 import React, { useState } from "react";
 import { FaLock } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
@@ -11,7 +11,7 @@ const Transaction = () => {
     async function createTransaction(e) {
         e.preventDefault();
         try {
-            const response = await axios.post("http://localhost:8000/transaction", {
+            const response = await axios1.post("/transaction", {
                 amount, receiverId, password
             })
             if (response.data.message === "NOTMATCH") {

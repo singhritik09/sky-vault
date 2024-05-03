@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import axios from "axios";
+import axios1 from "../../axiosInstance";
 import { useNavigate } from "react-router-dom";
 
 const Login = () => {
@@ -11,7 +11,7 @@ const Login = () => {
     async function handleLogin(e) {
         e.preventDefault();
         try {
-            const response = await axios.post("http://localhost:8000/login", {
+            const response = await axios1.post("/login", {
                 email, password
             });
 

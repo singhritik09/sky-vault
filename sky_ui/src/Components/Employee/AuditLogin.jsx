@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
 import AlternateLayout from "../Banking/AlternateLayout";
-import axios from 'axios';
+import axios1 from "../../axiosInstance";
 
 const AuditLogin = () => {
     const [log, setLog] = useState([]);
 
     async function handleLogs() {
         try {
-            const response = await axios.get("http://localhost:8000/audit-logs")
+            const response = await axios1.get("/audit-logs")
             setLog(response.data);
         }
         catch (e) {

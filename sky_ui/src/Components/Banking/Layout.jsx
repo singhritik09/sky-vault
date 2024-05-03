@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { FaUserGear } from "react-icons/fa6";
-import axios from "axios";
+import axios1 from "../../axiosInstance";
 import AuthButton from "../Dashboard/AuthButton";
 
 const Layout = () => {

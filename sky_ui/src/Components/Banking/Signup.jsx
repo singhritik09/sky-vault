@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import axios from "axios";
+import axios1 from "../../axiosInstance";
 const Signup = () => {
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
@@ -16,7 +16,7 @@ const Signup = () => {
         e.preventDefault(); // Prevent default form submission
 
         try {
-            const response = await axios.post("http://localhost:8000/signup", {
+            const response = await axios1.post("/signup", {
                 name, email, password, cpass, pancardNum, mobileNum
             });
             if (response.status === 400 || response.data.message === "PRESENT") {
