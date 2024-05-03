@@ -13,7 +13,6 @@ import session from 'express-session';
 import bcrypt from 'bcrypt';
 import MongoStore from 'connect-mongo';
 import AuditLogs from "./models/BankingModels/audit.js";
-import axios from "axios";
 import Query from "./models/BankingModels/query.js";
 // import { authenticateEmployee } from './middlewares/employeeLogin.js';
 import sendEmail from './utils/mail.js';
@@ -26,7 +25,7 @@ connectDB();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors({
-  origin: 'http://localhost:3000',
+  origin: ['http://localhost:3000',"http://3.25.197.125:3000"],
   credentials: true // Enable sending cookies
 }));
 
